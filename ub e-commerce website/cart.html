@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UK BookStore - Cart</title>
+    <link rel="stylesheet" href="cart.css">
+</head>
+<body>
+    <header>
+        <h1>UK BookStore</h1>
+        <div class="cart">
+            <button id="darkModeToggle">🌙</button>
+        </div>
+    </header>
+    
+    <section class="cart-page">
+        <h2>Your Shopping Cart</h2>
+        <ul id="cartItems"></ul>
+        <p>Subtotal: ₹<span id="cartSubtotal">0</span></p>
+        <p>Discount (10% if subtotal > ₹2000): ₹<span id="cartDiscount">0</span></p>
+        <p><strong>Grand Total: ₹<span id="cartTotal">0</span></strong></p>
+        <button id="buyNow">Buy Now</button>
+    </section>
+    
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        const cartItemsList = document.getElementById('cartItems');
+        const cartSubtotalElement = document.getElementById('cartSubtotal');
+        const cartDiscountElement = document.getElementById('cartDiscount');
+        const cartTotalElement = document.getElementById('cartTotal');
+        
+        function updateCart() {
+            cartItemsList.innerHTML = '';
+            let subtotal = 0;
+            cart.forEach((item, index) => {
+                let listItem = document.createElement('li');
+                listItem.innerHTML = `${item.name} - ₹${item.price} <button onclick="removeFromCart(${index})">Remove</button>`;
+                cartItemsList.appendChild(listItem);
+                subtotal += item.price;
+            });
+            
+            let discount = subtotal > 2000 ? subtotal * 0.10 : 0;
+            let grandTotal = subtotal - discount;
+            
+            cartSubtotalElement.textContent = subtotal.toFixed(2);
+            cartDiscountElement.textContent = discount.toFixed(2);
+            cartTotalElement.textContent = grandTotal.toFixed(2);
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+        
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+        
+        document.getElementById("buyNow").addEventListener("click", () => {
+            alert("Proceeding to checkout...");
+        });
+        
+        updateCart();
+        
+        document.getElementById("darkModeToggle").addEventListener("click", () => {
+            document.body.classList.toggle("dark-mode");
+        });
+    </script>
+</body>
+</html>
